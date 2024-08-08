@@ -34,6 +34,7 @@ app.post('/webhook', (req, res) => {
     res.send('ok');
 });
 
+// Payments
 app.post('/create-payment-intent', async (req, res) => {
     try {
         const paymentIntent = await stripe.paymentIntents.create({

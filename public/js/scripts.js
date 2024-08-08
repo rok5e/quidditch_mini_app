@@ -35,7 +35,8 @@ function startGame() {
     document.querySelector('.intro-image').style.display = 'none';
     document.querySelector('p').style.display = 'none';
     document.getElementById('start-button').style.display = 'none';
-	document.getElementById('pay-button').style.display = 'none';
+	document.getElementById('pay-button-20').style.display = 'none';
+	document.getElementById('pay-button-30').style.display = 'none';
 	document.querySelector('.game-window').style.display = 'none';
 
     // Show snitch and game window
