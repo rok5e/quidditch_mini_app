@@ -1,6 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
+const Stripe = require('stripe');
+
+const stripe = Stripe('sk_test_51PlT97KKYtxAEpm8phO55gCLj7RwHljBSQCON90qjPEuCKUxJ3X3DBve8lbMx3piZ64YfNaEDYdIVToZ56x3SYNS00Gmy1gqZL'); // Stripe secret key
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,6 +32,19 @@ app.post('/webhook', (req, res) => {
 
     // Process the message (e.g., respond to it)
     res.send('ok');
+});
+
+app.post('/create-payment-intent', async (req, res) => {
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: amount, // Amount in cents
+            currency: 'eur',
+        });
+
+        res.json({ clientSecret: paymentIntent.client_secret });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
 });
 
 // Serve static files

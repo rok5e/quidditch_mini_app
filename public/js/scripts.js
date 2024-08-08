@@ -35,6 +35,7 @@ function startGame() {
     document.querySelector('.intro-image').style.display = 'none';
     document.querySelector('p').style.display = 'none';
     document.getElementById('start-button').style.display = 'none';
+	document.getElementById('pay-button').style.display = 'none';
 	document.querySelector('.game-window').style.display = 'none';
 
     // Show snitch and game window
@@ -120,3 +121,42 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('start-button').addEventListener('click', startGame);
     document.getElementById('replay-button').addEventListener('click', startGame);
 });
+
+// Stripe payments
+const stripe = Stripe('pk_test_51PlT97KKYtxAEpm8Q6vPVtKUeiyMHx4rdF1Wd6Nj75yjcbq5c7AG00Csq4bniZiDxc0ozPffHQzpBamw80Ra7DzW00jpm9KKl0'); // Stripe public key
+
+document.getElementById('pay-button-20').addEventListener('click', async () => {
+    initiatePayment(2000); // 20 € payment
+});
+
+document.getElementById('pay-button-30').addEventListener('click', async () => {
+    initiatePayment(3000); // 30 € payment
+});
+
+async function initiatePayment(amount) {
+    try {
+        const response = await fetch('/create-payment-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amount }) // Send the amount to the server
+        });
+        const { clientSecret } = await response.json();
+
+        const { error } = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: {
+                    // For a real app, use Stripe Elements or Payment Request API to collect card details.
+                }
+            }
+        });
+
+        if (error) {
+            console.error('Payment failed:', error);
+            alert('Payment failed, please try again.');
+        } else {
+            alert('Payment successful!');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
