@@ -124,31 +124,44 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Stripe payments
-const stripe = Stripe('pk_test_51PlT97KKYtxAEpm8Q6vPVtKUeiyMHx4rdF1Wd6Nj75yjcbq5c7AG00Csq4bniZiDxc0ozPffHQzpBamw80Ra7DzW00jpm9KKl0'); // Stripe public key
+const stripe = Stripe(process.env.STRIPE_PUBLIC_KEY); // Stripe public key
+
+// Initialize Stripe Elements
+const elements = stripe.elements();
+const cardElement = elements.create('card');
+cardElement.mount('#card-element');
+
+let selectedAmount = 0;
 
 document.getElementById('pay-button-20').addEventListener('click', async () => {
-    initiatePayment(2000); // 20 € payment
+    selectedAmount = 2000; // 20 € payment
+	document.getElementById('payment-form').style.display = 'block';
 });
 
 document.getElementById('pay-button-30').addEventListener('click', async () => {
-    initiatePayment(3000); // 30 € payment
+    selectedAmount = 3000; // 30 € payment
+	document.getElementById('payment-form').style.display = 'block';
 });
 
-async function initiatePayment(amount) {
+document.getElementById('submit-payment').addEventListener('click', async () => {
+    if (selectedAmount === 0) {
+        alert('Please select an amount to pay.');
+        return;
+    }
+
     try {
         const response = await fetch('/create-payment-intent', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: amount }) // Send the amount to the server
+            body: JSON.stringify({ amount: selectedAmount }) // Send the selected amount to the server
         });
+
         const { clientSecret } = await response.json();
 
         const { error } = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
-                card: {
-                    // For a real app, use Stripe Elements or Payment Request API to collect card details.
-                }
-            }
+                card: cardElement,
+            },
         });
 
         if (error) {
@@ -156,8 +169,9 @@ async function initiatePayment(amount) {
             alert('Payment failed, please try again.');
         } else {
             alert('Payment successful!');
+            document.getElementById('payment-form').style.display = 'none'; // Hide the payment form
         }
     } catch (error) {
         console.error('Error:', error);
     }
-}
+});
