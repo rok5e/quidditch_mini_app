@@ -36,6 +36,7 @@ app.post('/webhook', (req, res) => {
 
 // Payments
 app.post('/create-payment-intent', async (req, res) => {
+	const { amount } = req.body;
     try {
         const paymentIntent = await stripe.paymentIntents.create({
             amount: amount, // Amount in cents
