@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const Stripe = require('stripe');
 
-const stripe = Stripe('sk_test_51PlT97KKYtxAEpm8phO55gCLj7RwHljBSQCON90qjPEuCKUxJ3X3DBve8lbMx3piZ64YfNaEDYdIVToZ56x3SYNS00Gmy1gqZL'); // Stripe secret key
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY); // Stripe secret key
 
 const app = express();
 const port = process.env.PORT || 3000;
