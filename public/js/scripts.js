@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Stripe payments
+const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_PUBLIC_KEY); // Stripe public key
 
 // Initialize Stripe Elements
